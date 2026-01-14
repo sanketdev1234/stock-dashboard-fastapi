@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Dashboard</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 220px;
+            background: #1f2933;
+            color: white;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        .company {
+            cursor: pointer;
+            padding: 8px;
+            border-bottom: 1px solid #444;
+        }
+        .company:hover {
+            background: #374151;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        select {
+            margin-bottom: 10px;
+        }
+        .insights {
+            margin-top: 30px;
+            display: flex;
+            gap: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- LEFT PANEL -->
+<div class="sidebar">
+    <h3>Companies</h3>
+    <div id="companyList"></div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="content">
+    <h2 id="title">Select a company</h2>
+
+    <label>Filter:</label>
+    <select id="daysFilter" onchange="reloadChart()">
+        <option value="30">Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+    </select>
+
+    <canvas id="priceChart"></canvas>
+
+    <!-- TOP GAINERS / LOSERS -->
+    <div class="insights">
+        <div>
+            <h3>Top Gainers</h3>
+            <ul id="gainers"></ul>
+        </div>
+
+        <div>
+            <h3>Top Losers</h3>
+            <ul id="losers"></ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = "http://127.0.0.1:8000";
+    let currentTicker = null;
+    let chart = null;
+
+    // Load companies
+    fetch(`${API_BASE}/companies`)
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById("companyList");
+            data.forEach(c => {
+                const div = document.createElement("div");
+                div.className = "company";
+                div.innerText = c.ticker;
+                div.onclick = () => loadStock(c.ticker);
+                list.appendChild(div);
+            });
+        });
+
+    function loadStock(ticker) {
+        currentTicker = ticker;
+        document.getElementById("title").innerText = ticker;
+        reloadChart();
+    }
+
+function reloadChart() {
+    if (!currentTicker) return;
+
+    fetch(`${API_BASE}/data/${currentTicker}`)
+        .then(res => res.json())
+        .then(data => {
+
+            const days = document.getElementById("daysFilter").value;
+            const sliced = data.slice(0, days).reverse();
+
+            const labels = sliced.map(d => d.trade_date);
+            const prices = sliced.map(d => d.close_price);
+
+            // Fetch prediction
+            fetch(`${API_BASE}/predict/${currentTicker}?days=5`)
+                .then(res => res.json())
+                .then(pred => {
+
+                    const futureLabels = [];
+                    for (let i = 1; i <= pred.predicted.length; i++) {
+                        futureLabels.push(`Day +${i}`);
+                    }
+
+                    const combinedLabels = labels.concat(futureLabels);
+                    const paddedActual = prices.concat(new Array(pred.predicted.length).fill(null));
+
+                    if (chart) chart.destroy();
+
+                    chart = new Chart(
+                        document.getElementById("priceChart"),
+                        {
+                            type: "line",
+                            data: {
+                                labels: combinedLabels,
+                                datasets: [
+                                    {
+                                        label: "Actual Price",
+                                        data: paddedActual,
+                                        borderWidth: 2
+                                    },
+                                    {
+                                        label: "Predicted Price",
+                                        data: new Array(prices.length).fill(null).concat(pred.predicted),
+                                        borderDash: [6, 6],
+                                        borderWidth: 2
+                                    }
+                                ]
+                            }
+                        }
+                    );
+                });
+        });
+}
+
+
+    // Load Top Gainers / Losers
+    fetch(`${API_BASE}/insights/top-movers`)
+        .then(res => res.json())
+        .then(data => {
+            const gainers = document.getElementById("gainers");
+            const losers = document.getElementById("losers");
+
+            gainers.innerHTML = "";
+            losers.innerHTML = "";
+
+            data.gainers.forEach(g => {
+                gainers.innerHTML += `<li>${g.ticker}: ${g.daily_return.toFixed(3)}</li>`;
+            });
+
+            data.losers.forEach(l => {
+                losers.innerHTML += `<li>${l.ticker}: ${l.daily_return.toFixed(3)}</li>`;
+            });
+        });
+</script>
+
+</body>
+</html>
