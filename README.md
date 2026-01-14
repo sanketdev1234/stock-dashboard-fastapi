@@ -94,6 +94,11 @@ cd stock-dashboard-fastapi
 ```
 ## How to Run the Project
 - Create Virtual Environment
+  ```
+   python -m venv venv
+   source venv/bin/activate      # macOS/Linux
+   venv\Scripts\activate         # Windows
+  ```
 
 ### Install Dependencies
 ```
@@ -181,9 +186,8 @@ GET /insights/top-movers
 
   Price Prediction (ML)
 GET /predict/{ticker}?days=5
-
 ```
---- 
+
 ### Machine Learning Explanation
 - Why Linear Regression?
   - Simple and interpretable
@@ -216,7 +220,8 @@ GET /predict/{ticker}?days=5
 - .env excluded via .gitignore
 
 - Swagger for self-documenting APIs
- 
+
+---
 
 
 
