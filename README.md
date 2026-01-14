@@ -222,6 +222,18 @@ GET /predict/{ticker}?days=5
 - Swagger for self-documenting APIs
 
 ---
+---
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/aac01426-8425-4c1f-b37d-da40a48bb57e" />
+---
+
+<img width="531" height="153" alt="image" src="https://github.com/user-attachments/assets/aee1b3a5-8fa8-411d-970c-24ca12c73e4a" />
+---
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fe0c370b-80c2-441a-9c30-98462a1de60f" />
+---
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4be7cbb9-d1e5-468e-af33-1bdebffe3be4" />
+---
+
 
 
 
