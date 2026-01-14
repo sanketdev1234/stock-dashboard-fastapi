@@ -89,8 +89,8 @@ The goal of this assignment was to:
 
 ### Setup Instructions (Step-by-Step)
 ```
-git clone https://github.com/<your-username>/stock-dashboard-fastapi.git
-cd stock-dashboard-fastapi
+git clone https://github.com/sanketdev1234/stock-dashboard-fastapi.git
+cd stock_dashboard
 ```
 ## How to Run the Project
 - Create Virtual Environment
