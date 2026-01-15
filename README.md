@@ -234,10 +234,26 @@ GET /predict/{ticker}?days=5
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4be7cbb9-d1e5-468e-af33-1bdebffe3be4" />
 ---
 
+---
+### Deployment Status
+-  This project is not deployed to a public cloud environment due to database service constraints, not due to limitations in the application itself.
+    - The backend uses MySQL with a relational schema.
+    -Free-tier cloud platforms (Render, Railway) do not currently provide free MySQL hosting.
+    - PlanetScale, the recommended MySQL cloud provider, requires a paid plan.
+    - Using localhost MySQL is not feasible in cloud deployment environments.
+- To avoid unnecessary costs and to keep the project fully reproducible, the application is designed to run locally with the same architecture that would be used in production
 
 
+### Deployment-Ready Architecture
 
+ - Although not deployed, the application is deployment-ready:
+ -  Environment variables are used for all credentials
+ - Database connections are abstracted via helper modules
+ - No hardcoded ports or secrets
+ - FastAPI is configured for cloud platforms (Render-compatible)
+ - CORS enabled for frontend integration
 
+-Switching to a managed cloud database (e.g., PlanetScale or PostgreSQL-based services) would allow deployment without any architectural changes.
 
 
 
