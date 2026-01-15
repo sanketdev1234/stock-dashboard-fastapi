@@ -1,6 +1,8 @@
+fastapi
+uvicorn
 pandas
 numpy
 yfinance
 mysql-connector-python
-sqlalchemy
+python-dotenv
 scikit-learn
